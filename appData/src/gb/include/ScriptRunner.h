@@ -192,5 +192,8 @@ void Script_EngFieldSetVar_b();
 void Script_EngFieldSetWordVar_b();
 void Script_EngFieldStore_b();
 void Script_EngFieldStoreWord_b();
+void Script_ActorFacePlayer_b();
+void Script_ActorFacePlayerHorizontal_b();
+void Script_ActorFacePlayerVertical_b();
 
 #endif

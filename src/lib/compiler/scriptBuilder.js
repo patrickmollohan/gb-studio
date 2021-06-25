@@ -101,7 +101,10 @@ import {
   ENGINE_FIELD_UPDATE_VAR,
   ENGINE_FIELD_UPDATE_VAR_WORD,
   ENGINE_FIELD_STORE,
-  ENGINE_FIELD_STORE_WORD
+  ENGINE_FIELD_STORE_WORD,
+  ACTOR_FACE_PLAYER,
+  ACTOR_FACE_PLAYER_HORIZONTAL,
+  ACTOR_FACE_PLAYER_VERTICAL,
 } from "../events/scriptCommands";
 import {
   getActorIndex,
@@ -1296,6 +1299,24 @@ class ScriptBuilder {
   timerDisable = () => {
     const output = this.output;
     output.push(cmd(TIMER_DISABLE));
+  };
+
+  actorFacePlayer = (inverted) => {
+    const output = this.output;
+    output.push(cmd(ACTOR_FACE_PLAYER));
+    output.push(inverted);
+  };
+
+  actorFacePlayerHorizontal = (inverted) => {
+    const output = this.output;
+    output.push(cmd(ACTOR_FACE_PLAYER_HORIZONTAL));
+    output.push(inverted);
+  };
+
+  actorFacePlayerVertical = (inverted) => {
+    const output = this.output;
+    output.push(cmd(ACTOR_FACE_PLAYER_VERTICAL));
+    output.push(inverted);
   };
 
   // Device
