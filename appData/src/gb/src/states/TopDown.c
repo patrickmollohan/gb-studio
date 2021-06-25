@@ -24,7 +24,8 @@ void Start_TopDown() {
 }
 
 void Update_TopDown() {
-  UBYTE tile_x, tile_y, hit_actor;
+  UBYTE tile_x, tile_y, tile_up, tile_down, tile_left, tile_right, hit_actor;
+  //WORD tile_up, tile_down, tile_left, tile_right;
 
   tile_x = DIV_8(player.pos.x);
   tile_y = DIV_8(player.pos.y);
@@ -43,77 +44,167 @@ void Update_TopDown() {
     }
 
     // Check input to set player movement
-    if (INPUT_RECENT_LEFT) {
+    if ((player_move_type & MOVE_LEFT) && INPUT_RECENT_LEFT) {
       player.dir.x = -1;
       player.dir.y = 0;
       player.rerender = TRUE;
 
       // Check for collisions to left of player
       if (topdown_grid == 16) {
-        UBYTE tile_left = tile_x - 2;
-        if (tile_x != 0 && !(TileAt2x2(tile_left, tile_y-1) & COLLISION_RIGHT)) {
-          player.moving = TRUE;
-        }
+        tile_left = tile_x - 2;
+        player.moving = (tile_x > 0) && !(TileAt2x2(tile_left, tile_y - 1) & COLLISION_RIGHT);
       } else {
-        UBYTE tile_left = tile_x - 1;
-        if (tile_x != 0 && !(TileAt2x1(tile_left, tile_y) & COLLISION_RIGHT)) {
-          player.moving = TRUE;
-        }
+        tile_left = tile_x - 1;
+        player.moving = (tile_x > 0) && !(TileAt2x1(tile_left, tile_y) & COLLISION_RIGHT);
       }
-
-    } else if (INPUT_RECENT_RIGHT) {
+    }
+    
+    if ((player_move_type & MOVE_RIGHT) && INPUT_RECENT_RIGHT) {
       player.dir.x = 1;
       player.dir.y = 0;
       player.rerender = TRUE;
 
       // Check for collisions to right of player
       if (topdown_grid == 16) {
-        UBYTE tile_right = tile_x + 2;
-        if (tile_x != image_tile_width - 2 && !(TileAt2x2(tile_right, tile_y-1) & COLLISION_LEFT)) {
-          player.moving = TRUE;
-        }
+        tile_right = tile_x + 2;
+        player.moving = (tile_x < image_tile_width - 2) && !(TileAt2x2(tile_right, tile_y - 1) & COLLISION_LEFT);
       } else {    
-        UBYTE tile_right = tile_x + 1;
-        if (tile_x != image_tile_width - 2 && !(TileAt2x1(tile_right, tile_y) & COLLISION_LEFT)) {
-          player.moving = TRUE;
-        }
+        tile_right = tile_x + 1;
+        player.moving = (tile_x < image_tile_width - 2) && !(TileAt2x1(tile_right, tile_y) & COLLISION_LEFT);
       }
-
-    } else if (INPUT_RECENT_UP) {
-
+    }
+    
+    if ((player_move_type & MOVE_UP) && INPUT_RECENT_UP) {
       player.dir.x = 0;
       player.dir.y = -1;
       player.rerender = TRUE;
 
       // Check for collisions above player
       if (topdown_grid == 16) {
-        UBYTE tile_up = tile_y - 3;
-        if (tile_y != 0 && !(TileAt2x2(tile_x, tile_up) & COLLISION_BOTTOM)) {
-          player.moving = TRUE;
-        }        
+        tile_up = tile_y - 3;
+        player.moving = (tile_y > 0) && !(TileAt2x2(tile_x, tile_up) & COLLISION_BOTTOM);   
       } else {
-        UBYTE tile_up = tile_y - 1;
-        if (tile_y != 0 && !(TileAt2x1(tile_x, tile_up) & COLLISION_BOTTOM)) {
-          player.moving = TRUE;
-        }
+        tile_up = tile_y - 1;
+        player.moving = (tile_y > 0) && !(TileAt2x1(tile_x, tile_up) & COLLISION_BOTTOM);
       }
-
-    } else if (INPUT_RECENT_DOWN) {
+    }
+    
+    if ((player_move_type & MOVE_DOWN) && INPUT_RECENT_DOWN) {
       player.dir.x = 0;
       player.dir.y = 1;
       player.rerender = TRUE;
 
       // Check for collisions below player
       if (topdown_grid == 16) {
-        UBYTE tile_down = tile_y + 1;
-        if (tile_y != image_tile_height - 1 && !(TileAt2x2(tile_x, tile_down) & COLLISION_TOP)) {
-          player.moving = TRUE;
-        }
+        tile_down = tile_y + 1;
+        player.moving = (tile_y < image_tile_height - 1) && !(TileAt2x2(tile_x, tile_down) & COLLISION_TOP);
       } else {
-        UBYTE tile_down = tile_y + 1;
-        if (tile_y != image_tile_height - 1 && !(TileAt2x1(tile_x, tile_down) & COLLISION_TOP)) {
-          player.moving = TRUE;
-        }
+        tile_down = tile_y + 1;
+        player.moving = (tile_y < image_tile_height - 1) && !(TileAt2x1(tile_x, tile_down) & COLLISION_TOP);
+      }
+    }
+
+    if ((player_move_type & MOVE_UP_LEFT) && INPUT_UP_LEFT) {
+      player.rerender = TRUE;
+
+      if (topdown_grid == 16) {
+        tile_left = tile_x - 2;
+        tile_up = tile_y - 3;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == 0 || (TileAt2x2(tile_left, tile_y - 1) & COLLISION_RIGHT)) ? 0 : -1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == 0 || (TileAt2x2(tile_x, tile_up) & COLLISION_BOTTOM)) ? 0 : -1;
+      } else {
+        tile_left = tile_x - 1;
+        tile_up = tile_y - 1;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == 0 || (TileAt2x1(tile_left, tile_y) & COLLISION_RIGHT)) ? 0 : -1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == 0 || (TileAt2x1(tile_x, tile_up) & COLLISION_BOTTOM)) ? 0 : -1;
+      }
+      
+      player.moving = player.dir.x != 0 || player.dir.y != 0;
+      if (!player.moving) {
+        player.dir.x = -1;
+        player.dir.y = -1;
+      }
+    }
+    
+    if ((player_move_type & MOVE_UP_RIGHT) && INPUT_UP_RIGHT) {
+      player.rerender = TRUE;
+
+      if (topdown_grid == 16) {
+        tile_right = tile_x + 2;
+        tile_up = tile_y - 3;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == image_tile_width - 2 || (TileAt2x2(tile_right, tile_y - 1) & COLLISION_LEFT)) ? 0 : 1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == 0 || (TileAt2x2(tile_x, tile_up) & COLLISION_BOTTOM)) ? 0 : -1;
+      } else {
+        tile_right = tile_x + 1;
+        tile_up = tile_y - 1;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == image_tile_width - 2 || (TileAt2x1(tile_right, tile_y) & COLLISION_LEFT)) ? 0 : 1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == 0 || (TileAt2x1(tile_x, tile_up) & COLLISION_BOTTOM)) ? 0 : -1;
+      }
+      
+      player.moving = player.dir.x != 0 || player.dir.y != 0;
+      if (!player.moving) {
+        player.dir.x = 1;
+        player.dir.y = -1;
+      }
+    }
+
+    if ((player_move_type & MOVE_DOWN_LEFT) && INPUT_DOWN_LEFT) {
+      player.rerender = TRUE;
+
+      if (topdown_grid == 16) {
+        tile_left = tile_x - 2;
+        tile_down = tile_y + 1;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == 0 || (TileAt2x2(tile_left, tile_y - 1) & COLLISION_RIGHT)) ? 0 : -1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == image_tile_height - 1 || (TileAt2x2(tile_x, tile_down) & COLLISION_TOP)) ? 0 : 1;
+      } else {
+        tile_left = tile_x - 1;
+        tile_down = tile_y + 1;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == 0 || (TileAt2x1(tile_left, tile_y) & COLLISION_RIGHT)) ? 0 : -1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == image_tile_height - 1 || (TileAt2x1(tile_x, tile_down) & COLLISION_TOP)) ? 0 : 1;
+      }
+      
+      player.moving = player.dir.x != 0 || player.dir.y != 0;
+      if (!player.moving) {
+        player.dir.x = -1;
+        player.dir.y = 1;
+      }
+    }
+
+    if ((player_move_type & MOVE_DOWN_RIGHT) && INPUT_DOWN_RIGHT) {
+      player.rerender = TRUE;
+
+      if (topdown_grid == 16) {
+        tile_right = tile_x + 2;
+        tile_down = tile_y + 1;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == image_tile_width - 2 || (TileAt2x2(tile_right, tile_y - 1) & COLLISION_LEFT)) ? 0 : 1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == image_tile_height - 1 || (TileAt2x2(tile_x, tile_down) & COLLISION_TOP)) ? 0 : 1;
+      } else {
+        tile_right = tile_x + 1;
+        tile_down = tile_y + 1;
+        // Check X collisions/bounds
+        player.dir.x = (tile_x == image_tile_width - 2 || (TileAt2x1(tile_right, tile_y - 1) & COLLISION_LEFT)) ? 0 : 1;
+        // Check Y collisions/bounds
+        player.dir.y = (tile_y == image_tile_height - 1 || (TileAt2x1(tile_x, tile_down) & COLLISION_TOP)) ? 0 : 1;
+      }
+
+      player.moving = player.dir.x != 0 || player.dir.y != 0;
+      if (!player.moving) {
+        player.dir.x = 1;
+        player.dir.y = 1;
       }
     }
 

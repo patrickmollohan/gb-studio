@@ -114,6 +114,22 @@
       "defaultValue": 8
     },
     {
+      "key": "player_move_type",
+      "label": "FIELD_player_move_type",
+      "group": "SETTINGS_MOVEMENT",
+      "type": "select",
+      "options": [
+        [15, "FIELD_CARDINAL_ONLY"],
+        [240,  "FIELD_DIAGONAL_ONLY"],
+        [255, "FIELD_CARDINAL_DIAGONAL"],
+        [3,  "FIELD_HORIZONTAL_ONLY"],
+        [12, "FIELD_VERTICAL_ONLY"],
+        [0,   "FIELD_NONE"]
+      ],
+      "cType": "UBYTE",
+      "defaultValue": 15
+    },
+    {
       "key": "fade_style",
       "label": "FIELD_FADE_STYLE",
       "group": "SETTINGS_FADE",

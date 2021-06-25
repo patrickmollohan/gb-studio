@@ -6,6 +6,15 @@
 #include "BankData.h"
 #include "UI.h"
 
+#define MOVE_UP_LEFT    0x80U
+#define MOVE_UP_RIGHT   0x40U
+#define MOVE_DOWN_LEFT  0x20U
+#define MOVE_DOWN_RIGHT 0x10U
+#define MOVE_DOWN       J_DOWN
+#define MOVE_UP         J_UP
+#define MOVE_LEFT       J_LEFT
+#define MOVE_RIGHT      J_RIGHT
+
 #define ALLOW_DEFAULT_INPUT_RIGHT (ui_block || !GET_BIT(input_override_default,0))
 #define ALLOW_DEFAULT_INPUT_LEFT (ui_block || !GET_BIT(input_override_default,1))
 #define ALLOW_DEFAULT_INPUT_UP (ui_block || !GET_BIT(input_override_default,2))
@@ -24,6 +33,18 @@
 
 /* TRUE if down is being held on dpad */
 #define INPUT_DOWN (ALLOW_DEFAULT_INPUT_DOWN && (joy & J_DOWN))
+
+/* TRUE if up and left are being held on dpad */
+#define INPUT_UP_LEFT (ALLOW_DEFAULT_INPUT_UP && ALLOW_DEFAULT_INPUT_LEFT && (joy & J_UP) && (joy & J_LEFT))
+
+/* TRUE if up and right are being held on dpad */
+#define INPUT_UP_RIGHT (ALLOW_DEFAULT_INPUT_UP && ALLOW_DEFAULT_INPUT_RIGHT && (joy & J_UP) && (joy & J_RIGHT))
+
+/* TRUE if down and left are being held on dpad */
+#define INPUT_DOWN_LEFT (ALLOW_DEFAULT_INPUT_DOWN && ALLOW_DEFAULT_INPUT_LEFT && (joy & J_DOWN) && (joy & J_LEFT))
+
+/* TRUE if down and right are being held on dpad */
+#define INPUT_DOWN_RIGHT (ALLOW_DEFAULT_INPUT_DOWN && ALLOW_DEFAULT_INPUT_RIGHT && (joy & J_DOWN) && (joy & J_RIGHT))
 
 /* TRUE if left is being held on dpad */
 #define INPUT_RECENT_LEFT (ALLOW_DEFAULT_INPUT_LEFT && ((recent_joy & J_LEFT) || (!recent_joy && (joy & J_LEFT))))
