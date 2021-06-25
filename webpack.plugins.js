@@ -22,7 +22,7 @@ const plugins = [
   }),
   new ForkTsCheckerWebpackPlugin({
     async: false,
-    memoryLimit: 4096,
+    memoryLimit: 1024,
   }),
 ];
 
