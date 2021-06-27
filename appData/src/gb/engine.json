@@ -115,7 +115,7 @@
     },
     {
       "key": "player_move_type",
-      "label": "FIELD_player_move_type",
+      "label": "FIELD_PLAYER_MOVE_TYPE",
       "group": "SETTINGS_MOVEMENT",
       "type": "select",
       "options": [
