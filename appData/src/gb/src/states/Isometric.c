@@ -43,7 +43,7 @@ void Update_Isometric() {
     }
 
     // Check input to set player movement
-    if ((player_move_type & MOVE_DOWN_LEFT) && INPUT_RECENT_LEFT) {
+    if ((player_move_type != 0) && INPUT_RECENT_LEFT) {
       player.rerender = TRUE;
 
       if (topdown_grid == 16) {
@@ -69,7 +69,7 @@ void Update_Isometric() {
       }
     }
     
-    if ((player_move_type & MOVE_UP_RIGHT) && INPUT_RECENT_RIGHT) {
+    if ((player_move_type != 0) && INPUT_RECENT_RIGHT) {
       player.rerender = TRUE;
 
       if (topdown_grid == 16) {
@@ -95,7 +95,7 @@ void Update_Isometric() {
       }
     }
     
-    if ((player_move_type & MOVE_UP_LEFT) && INPUT_RECENT_UP) {
+    if ((player_move_type != 0) && INPUT_RECENT_UP) {
       player.rerender = TRUE;
 
       if (topdown_grid == 16) {
@@ -121,7 +121,7 @@ void Update_Isometric() {
       }
     }
     
-    if ((player_move_type & MOVE_DOWN_RIGHT) && INPUT_RECENT_DOWN) {
+    if ((player_move_type != 0) && INPUT_RECENT_DOWN) {
       player.rerender = TRUE;
 
       if (topdown_grid == 16) {
