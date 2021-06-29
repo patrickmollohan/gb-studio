@@ -22,6 +22,7 @@ const options: SceneTypeOption[] = [
   },
   { value: "3", label: l10n("GAMETYPE_SHMUP") },
   { value: "4", label: l10n("GAMETYPE_POINT_N_CLICK") },
+  { value: "5", label: l10n("GAMETYPE_ISOMETRIC") },
 ];
 
 export const SceneTypeSelect: FC<SceneTypeSelectProps> = ({

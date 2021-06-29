@@ -658,6 +658,7 @@
   "// 19 ": "Game Type --------------------------------------------------",
 
   "GAMETYPE_TOP_DOWN": "Top Down 2D",
+  "GAMETYPE_ISOMETRIC": "Isometric",
   "GAMETYPE_PLATFORMER": "Platformer",
   "GAMETYPE_ADVENTURE": "Adventure",
   "GAMETYPE_SHMUP": "Shoot Em' Up",

@@ -276,6 +276,7 @@ class SceneEditor extends Component {
                   }
                   <option value="3">{l10n("GAMETYPE_SHMUP")}</option>
                   <option value="4">{l10n("GAMETYPE_POINT_N_CLICK")}</option>
+                  <option value="5">{l10n("GAMETYPE_ISOMETRIC")}</option>
                 </select>
               </label>
             </FormField>
