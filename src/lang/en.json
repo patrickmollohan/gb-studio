@@ -305,6 +305,10 @@
   "FIELD_DEFAULT_MUSIC_EDITOR": "Default Music Editor",
   "FIELD_SYSTEM_DEFAULT": "System Default",
   "FIELD_CHOOSE_APPLICATION": "Choose Application",
+  "FIELD_ALL_DIRECTIONS": "All Directions",
+  "FIELD_INVERT": "Invert",
+  "FIELD_HORIZONTAL_ONLY": "Horizontal Only",
+  "FIELD_VERTICAL_ONLY": "Vertical Only",
 
   "// 7": "Asset Viewer ---------------------------------------------",
   "ASSET_SEARCH": "Search...",
@@ -429,6 +433,7 @@
   "EVENT_FADE_SETTINGS": "Fade: Change Settings",
   "EVENT_ENGINE_FIELD_SET": "Engine: Field Update",
   "EVENT_ENGINE_FIELD_STORE": "Engine: Store Field In Variable",
+  "EVENT_ACTOR_FACE_PLAYER": "Actor: Face Player",
 
   "// 10": "Menu -----------------------------------------------------",
 
