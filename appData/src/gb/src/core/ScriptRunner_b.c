@@ -22,6 +22,7 @@
 #include "states/Platform.h"
 #include "data_ptrs.h"
 #include <rand.h>
+#include <stdlib.h>
 
 #define RAM_START_PTR 0xA000
 #define RAM_START_VARS_PTR 0xA0FF
@@ -159,7 +160,10 @@ const SCRIPT_CMD script_cmds[] = {
     {Script_EngFieldSetVar_b, 4},      // 0x6C
     {Script_EngFieldSetWordVar_b, 6},  // 0x6D
     {Script_EngFieldStore_b, 4},       // 0x6E
-    {Script_EngFieldStoreWord_b, 6},   // 0x6F    
+    {Script_EngFieldStoreWord_b, 6},   // 0x6F
+    {Script_ActorFacePlayer_b, 1},     // 0x6B
+    {Script_ActorFacePlayerHorizontal_b, 1}, // 0x6C 
+    {Script_ActorFacePlayerVertical_b, 1},   // 0x6D    
 };
 
 void ScriptTimerUpdate_b() __banked {
@@ -2283,6 +2287,53 @@ void Script_ActorStopUpdate_b() {
     ScriptCtxPoolReturn(actors[active_script_ctx.script_actor].movement_ctx, active_script_ctx.script_actor);
   }
   actors[active_script_ctx.script_actor].movement_ctx = 0; //@wtf fixes crash but still will not stop update script from same update script
+}
+
+void Script_ActorFacePlayer_b() {
+  if (ACTOR_ON_TILE(active_script_ctx.script_actor)) {
+    WORD difference_x = player.pos.x - actors[active_script_ctx.script_actor].pos.x;
+    WORD difference_y = player.pos.y - actors[active_script_ctx.script_actor].pos.y;
+    if (abs(difference_x) > abs(difference_y)) {
+      if (script_cmd_args[0]) {
+        actors[active_script_ctx.script_actor].dir.x = (difference_x < 0) ? 1 : -1;
+      } else {
+        actors[active_script_ctx.script_actor].dir.x = (difference_x < 0) ? -1 : 1;
+      }
+      actors[active_script_ctx.script_actor].dir.y = 0;
+    } else {
+      actors[active_script_ctx.script_actor].dir.x = 0;
+      if (script_cmd_args[0]) {
+        actors[active_script_ctx.script_actor].dir.y = (difference_y < 0) ? 1 : -1;
+      } else {
+        actors[active_script_ctx.script_actor].dir.y = (difference_y < 0) ? -1 : 1;
+      }
+    }
+    actors[active_script_ctx.script_actor].rerender = TRUE;
+  }
+}
+
+void Script_ActorFacePlayerHorizontal_b() {
+  if (ACTOR_ON_TILE(active_script_ctx.script_actor)) {
+    if (script_cmd_args[0]) {
+      actors[active_script_ctx.script_actor].dir.x = (player.pos.x < actors[active_script_ctx.script_actor].pos.x) ? 1 : -1;
+    } else {
+      actors[active_script_ctx.script_actor].dir.x = (player.pos.x < actors[active_script_ctx.script_actor].pos.x) ? -1 : 1;
+    }
+    actors[active_script_ctx.script_actor].dir.y = 0;
+    actors[active_script_ctx.script_actor].rerender = TRUE;
+  }
+}
+
+void Script_ActorFacePlayerVertical_b() {
+  if (ACTOR_ON_TILE(active_script_ctx.script_actor)) {
+    actors[active_script_ctx.script_actor].dir.x = 0;
+    if (script_cmd_args[0]) {
+        actors[active_script_ctx.script_actor].dir.y = (player.pos.y < actors[active_script_ctx.script_actor].pos.y) ? 1 : -1;
+    } else {
+        actors[active_script_ctx.script_actor].dir.y = (player.pos.y < actors[active_script_ctx.script_actor].pos.y) ? -1 : 1;
+    }
+    actors[active_script_ctx.script_actor].rerender = TRUE;
+  }
 }
 
 void Script_ActorSetAnimate_b() {
