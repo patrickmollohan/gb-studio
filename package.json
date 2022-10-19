@@ -1,11 +1,11 @@
 {
   "name": "gb-studio",
-  "productName": "GB Studio",
+  "productName": "GB Studio v2 QOL",
   "homepage": "https://www.gbstudio.dev",
   "bugs": {
     "url": "https://github.com/chrismaltby/gb-studio/issues"
   },
-  "version": "2.0.0-beta5",
+  "version": "2.1.0-qol",
   "description": "Visual retro game maker",
   "main": ".webpack/main",
   "scripts": {
