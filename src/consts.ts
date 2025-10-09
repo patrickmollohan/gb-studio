@@ -41,7 +41,7 @@ export const EMULATOR_MUTED_SETTING_KEY = "emulatorMuted";
 export const NUM_SUBPIXEL_BITS = 5;
 
 // Scene Limits
-export const MAX_ACTORS = 20;
+export const MAX_ACTORS = 30;
 export const MAX_ACTORS_SMALL = 10;
 export const MAX_TRIGGERS = 30;
 export const MAX_ONSCREEN = 10;
