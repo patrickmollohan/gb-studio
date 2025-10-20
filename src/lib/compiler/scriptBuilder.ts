@@ -9258,9 +9258,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     const labelRight = this.getNextLabel();
     const labelUp = this.getNextLabel();
     const labelDown = this.getNextLabel();
-    const labelEnd0 = this.getNextLabel();
-    const labelEnd1 = this.getNextLabel();
-    const labelEnd2 = this.getNextLabel();
+    const labelEnd = this.getNextLabel();
 
     this.setActorId(actorPosRef, otherActorId);
     this._actorGetPosition(actorPosRef);
@@ -9289,7 +9287,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .refSet(this._localRef(actorPosRef, 1))
       .stop();
     this._actorSetDirection(actorPosRef, ".DIR_LEFT");
-    this._jump(labelEnd0);
+    this._jump(labelEnd);
     
     this._label(labelRight);
     this._rpn()
@@ -9301,7 +9299,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .refSet(this._localRef(actorPosRef, 1))
       .stop();
     this._actorSetDirection(actorPosRef, ".DIR_RIGHT");
-    this._jump(labelEnd0);
+    this._jump(labelEnd);
 
     this._label(labelUp);
     this._rpn()
@@ -9315,7 +9313,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .refSet(this._localRef(actorPosRef, 2))
       .stop();
     this._actorSetDirection(actorPosRef, ".DIR_UP");
-    this._jump(labelEnd0);
+    this._jump(labelEnd);
 
     this._label(labelDown);
     this._rpn()
@@ -9328,15 +9326,9 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .stop();
     this._actorSetDirection(actorPosRef, ".DIR_DOWN");
 
-    this._label(labelEnd0);
+    this._label(labelEnd);
     this._setConst(this._localRef(actorPosRef, 3), toASMMoveFlags(moveType, useCollisions));
-    this._if(".NE", currOtherActorDirRef, otherActorDirRef, labelEnd1, 0);
     this._actorSetPosition(actorPosRef);
-    this._jump(labelEnd2);
-    this._label(labelEnd1);
-    this._actorMoveTo(actorPosRef);
-    this.cameraShake(true, true, 5, 5)
-    this._label(labelEnd2);
 
     this._addNL();
   };
