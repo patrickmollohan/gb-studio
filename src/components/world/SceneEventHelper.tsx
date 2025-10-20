@@ -147,6 +147,12 @@ const PosOffset = styled.div`
   }
 `;
 
+const Boundary = styled.div`
+  position: absolute;
+  background: rgba(255, 0, 0, 0.58);
+  box-shadow: 0px 0px 0px 1px rgba(255, 0, 0, 0.2) inset;
+`;
+
 export const getArgValue = (
   arg: unknown,
   constantsLookup: Record<string, Constant>,
@@ -535,6 +541,43 @@ export const SceneEventHelper: FC<SceneEventHelperProps> = ({ scene }) => {
           maxHeight={18}
         />
       </PosOffset>
+    );
+  }
+
+  if (scriptEventDef.helper.type === "boundary") {
+    const units = scriptEventDef.helper.units
+      ? argValue(event.args?.[scriptEventDef.helper.units])
+      : "tiles";
+    const left = ensureMaybeNumber(
+      argValue(event.args?.[scriptEventDef.helper.left]),
+      0
+    );
+    const right = ensureMaybeNumber(
+      argValue(event.args?.[scriptEventDef.helper.right]),
+      0
+    );
+    const top = ensureMaybeNumber(
+      argValue(event.args?.[scriptEventDef.helper.top]),
+      0
+    );
+    const bottom = ensureMaybeNumber(
+      argValue(event.args?.[scriptEventDef.helper.bottom]),
+      0
+    );
+    if (left === undefined && right === undefined && top === undefined && bottom === undefined) {
+      return <div />;
+    }
+    return (
+      <EventHelperWrapper>
+        <Boundary
+          style={{
+            left: (left || 0) * (units === "pixels" ? 1 : TILE_SIZE),
+            top: (top || 0) * (units === "pixels" ? 1 : TILE_SIZE),
+            width: ((right || 0) * (units === "pixels" ? 1 : TILE_SIZE)) - ((left || 0) * (units === "pixels" ? 1 : TILE_SIZE)) + (units === "pixels" ? 1 : TILE_SIZE),
+            height: ((bottom || 0) * (units === "pixels" ? 1 : TILE_SIZE)) - ((top || 0) * (units === "pixels" ? 1 : TILE_SIZE)) + (units === "pixels" ? 1 : TILE_SIZE),
+          }}
+        />
+      </EventHelperWrapper>
     );
   }
 

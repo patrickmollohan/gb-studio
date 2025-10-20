@@ -104,6 +104,7 @@ import {
   tileToSubpx,
   unitsValueToSubpx,
 } from "shared/lib/helpers/subpixels";
+import { act } from "react";
 
 export type ScriptOutput = string[];
 
@@ -8340,6 +8341,1006 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     }${this.output.join("\n")}
 `;
   };
+
+  // --------------------------------------------------------------------------
+  // Custom
+
+  _actorGetBounds = (addr: string) => {
+    this._addCmd("VM_ACTOR_GET_BOUNDS", addr);
+  };
+
+  _actorGetBoundsPos = (addr: string) => {
+    this._addCmd("VM_ACTOR_GET_BOUNDS_POS", addr);
+  };
+
+  _cameraGetDrawScroll = (addr: string) => {
+    this._getMemInt16(this._localRef(addr, 0), "draw_scroll_x");
+    this._getMemInt16(this._localRef(addr, 2), "draw_scroll_y");
+  };
+
+  ifActorBoundsInBoundaryPartial = (
+    actorId: string,
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor_pos", 3);
+    const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment("If Actor Bounds In Boundary (Partial)");
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+    this.setActorId(actorBoundsRef, actorId);
+    this._actorGetBounds(actorBoundsRef);
+
+    this._rpn()
+      // Left
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 2))
+      .operator(".ADD")
+      .int16(unitsValueToSubpx(left, units))
+      .operator(".GT")
+
+      // Right
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 1))
+      .operator(".ADD")
+      .int16(unitsValueToSubpx(right + 1, units))
+      .operator(".LT")
+      .operator(".AND")
+
+      // Top
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 4))
+      .operator(".ADD")
+      .int16(unitsValueToSubpx(top, units))
+      .operator(".GT")
+      .operator(".AND")
+
+      // Bottom
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 3))
+      .operator(".ADD")
+      .int16(unitsValueToSubpx(bottom + 1, units))
+      .operator(".LT")
+      .operator(".AND")
+
+      .stop();
+    
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  ifActorBoundsInBoundaryPartialVariables = (
+    actorId: string,
+    left: string,
+    right: string,
+    top: string,
+    bottom: string,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor_pos", 3);
+    const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment("If Actor Bounds In Boundary (Partial)");
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+    this.setActorId(actorBoundsRef, actorId);
+    this._actorGetBounds(actorBoundsRef);
+
+    this._rpn()
+      // Left
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 2))
+      .operator(".ADD")
+      .refVariable(left)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".GT")
+
+      // Right
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 1))
+      .operator(".ADD")
+      .int16(1)
+      .refVariable(right)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".LT")
+      .operator(".AND")
+
+      // Top
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 4))
+      .operator(".ADD")
+      .refVariable(top)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".GT")
+      .operator(".AND")
+
+      // Bottom
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 3))
+      .operator(".ADD")
+      .int16(1)
+      .refVariable(bottom)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".LT")
+      .operator(".AND")
+
+      .stop();
+    
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  ifActorBoundsInBoundaryFull = (
+    actorId: string,
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor_pos", 3);
+    const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment("If Actor Bounds In Boundary (Full)");
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+    this.setActorId(actorBoundsRef, actorId);
+    this._actorGetBounds(actorBoundsRef);
+
+    this._rpn()
+      // Left
+      .int16(unitsValueToSubpx(left, units))
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 1))
+      .operator(".ADD")
+      .operator(".LTE")
+
+      // Right
+      .int16(unitsValueToSubpx(right + 1, units))
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 2))
+      .operator(".ADD")
+      .operator(".GTE")
+      .operator(".AND")
+
+      // Top
+      .int16(unitsValueToSubpx(top, units))
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 3))
+      .operator(".ADD")
+      .operator(".LTE")
+      .operator(".AND")
+
+      // Bottom
+      .int16(unitsValueToSubpx(bottom + 1, units))
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 4))
+      .operator(".ADD")
+      .operator(".GTE")
+      .operator(".AND")
+
+      .stop();
+    
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  ifActorBoundsInBoundaryFullVariables = (
+    actorId: string,
+    left: string,
+    right: string,
+    top: string,
+    bottom: string,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor_pos", 3);
+    const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment("If Actor Bounds In Boundary (Full)");
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+    this.setActorId(actorBoundsRef, actorId);
+    this._actorGetBounds(actorBoundsRef);
+
+    this._rpn()
+      // Left
+      .refVariable(left)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 1))
+      .operator(".ADD")
+      .operator(".LTE")
+
+      // Right
+      .int16(1)
+      .refVariable(right)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 2))
+      .operator(".ADD")
+      .operator(".GTE")
+      .operator(".AND")
+
+      // Top
+      .refVariable(top)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 3))
+      .operator(".ADD")
+      .operator(".LTE")
+      .operator(".AND")
+
+      // Bottom
+      .int16(1)
+      .refVariable(bottom)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 4))
+      .operator(".ADD")
+      .operator(".GTE")
+      .operator(".AND")
+
+      .stop();
+    
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  ifActorPosInBoundary = (
+    actorId: string,
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor_pos", 3);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment("If Actor Position In Boundary");
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+
+    this._rpn()
+      // Left
+      .int16(unitsValueToSubpx(left, units))
+      .ref(this._localRef(actorPosRef, 1))
+      .operator(".LTE")
+
+      // Right
+      .int16(unitsValueToSubpx(right, units))
+      .ref(this._localRef(actorPosRef, 1))
+      .operator(".GTE")
+      .operator(".AND")
+
+      // Top
+      .int16(unitsValueToSubpx(top, units))
+      .ref(this._localRef(actorPosRef, 2))
+      .operator(".LTE")
+      .operator(".AND")
+
+      // Bottom
+      .int16(unitsValueToSubpx(bottom, units))
+      .ref(this._localRef(actorPosRef, 2))
+      .operator(".GTE")
+      .operator(".AND")
+
+      .stop();
+    
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  ifActorPosInBoundaryVariables = (
+    actorId: string,
+    left: string,
+    right: string,
+    top: string,
+    bottom: string,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor", 3);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment("If Actor Position In Boundary");
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+
+    this._rpn()
+      // Left
+      .refVariable(left)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 1))
+      .operator(".LTE")
+
+      // Right
+      .refVariable(right)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 1))
+      .operator(".GTE")
+      .operator(".AND")
+
+      // Top
+      .refVariable(top)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 2))
+      .operator(".LTE")
+      .operator(".AND")
+
+      // Bottom
+      .refVariable(bottom)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .ref(this._localRef(actorPosRef, 2))
+      .operator(".GTE")
+      .operator(".AND")
+
+      .stop();
+    
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  ifActorOnScreen = (
+    actorId: string,
+    left: number,
+    right: number,
+    top: number,
+    bottom: number,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor_pos", 3);
+    const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
+    const cameraRef = this._declareLocal("camera", 4, true);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment(`If Actor On Screen`);
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+    this.setActorId(actorBoundsRef, actorId);
+    this._actorGetBounds(actorBoundsRef);
+    this._cameraGetDrawScroll(cameraRef);
+
+    this._rpn()
+      // Left screen edge
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 2))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 0))
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .int16(unitsValueToSubpx(left, units))
+      .operator(".SUB")
+      .operator(".GT")
+      
+      // Right screen edge
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 1))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 0))
+      .int16(160)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .int16(unitsValueToSubpx(right, units))
+      .operator(".ADD")
+      .operator(".LT")
+      .operator(".AND")
+      
+      // Top screen edge
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 4))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 2))
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .int16(unitsValueToSubpx(top, units))
+      .operator(".SUB")
+      .operator(".GT")
+      .operator(".AND")
+      
+      // Bottom screen edge
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 3))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 2))
+      .int16(144)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .int16(unitsValueToSubpx(bottom, units))
+      .operator(".ADD")
+      .operator(".LT")
+      .operator(".AND")
+      
+      .stop();
+
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  ifActorOnScreenVariables = (
+    actorId: string,
+    left: string,
+    right: string,
+    top: string,
+    bottom: string,
+    truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor_pos", 3);
+    const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
+    const cameraRef = this._declareLocal("camera", 4, true);
+    const falseLabel = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment(`If Actor On Screen`);
+    this.setActorId(actorPosRef, actorId);
+    this._actorGetPosition(actorPosRef);
+    this.setActorId(actorBoundsRef, actorId);
+    this._actorGetBounds(actorBoundsRef);
+    this._cameraGetDrawScroll(cameraRef);
+
+    this._rpn()
+      // Left screen edge
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 2))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 0))
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .refVariable(left)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".SUB")
+      .operator(".GT")
+      
+      // Right screen edge
+      .ref(this._localRef(actorPosRef, 1))
+      .ref(this._localRef(actorBoundsRef, 1))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 0))
+      .int16(160)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .refVariable(right)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".ADD")
+      .operator(".LT")
+      .operator(".AND")
+      
+      // Top screen edge
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 4))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 2))
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .refVariable(top)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".SUB")
+      .operator(".GT")
+      .operator(".AND")
+      
+      // Bottom screen edge
+      .ref(this._localRef(actorPosRef, 2))
+      .ref(this._localRef(actorBoundsRef, 3))
+      .operator(".ADD")
+      .ref(this._localRef(cameraRef, 2))
+      .int16(144)
+      .operator(".ADD")
+      .int16(subpxShiftForUnits("pixels"))
+      .operator(".SHL")
+      .refVariable(bottom)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(".ADD")
+      .operator(".LT")
+      .operator(".AND")
+      
+      .stop();
+
+    this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
+    this._addNL();
+    this._compilePath(truePath);
+    this._jump(endLabel);
+    this._label(falseLabel);
+    this._compilePath(falsePath);
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  actorFaceActor = (actorId: string, actorId2: string, direction: string, invert: boolean) => {
+    const actorRef = this._declareLocal("actor", 4);
+    const otherActorRef = this._declareLocal("other_actor", 3, true);
+    const yLabel = this.getNextLabel();
+    const yOverride = this.getNextLabel();
+    const faceUp = this.getNextLabel();
+    const faceLeft = this.getNextLabel();
+    const endLabel = this.getNextLabel();
+    this._addComment("Actor Face Actor");
+    this.setActorId(actorRef, actorId);
+    this._actorGetPosition(actorRef);
+    this.setActorId(otherActorRef, actorId2);
+    this._actorGetPosition(otherActorRef);
+
+    this._rpn()
+      .ref(this._localRef(actorRef, 1))
+      .ref(this._localRef(otherActorRef, 1))
+      .operator(".SUB")
+      .operator(".ABS")
+
+      .ref(this._localRef(actorRef, 2))
+      .ref(this._localRef(otherActorRef, 2))
+      .operator(".SUB")
+      .operator(".ABS")
+      .stop();
+
+    this._if(".GT", ".ARG0", ".ARG1", yLabel, 2);
+    this._label(yOverride);
+    if (direction !== "vertical") {
+      this._rpn()
+        .ref(this._localRef(actorRef, 1))
+        .ref(this._localRef(otherActorRef, 1))
+        .stop();
+      this._if(".LT", ".ARG0", ".ARG1", faceLeft, 2);
+      invert ? this._actorSetDirection(actorRef, ".DIR_LEFT") : this._actorSetDirection(actorRef, ".DIR_RIGHT");
+      this._jump(endLabel);
+
+      this._label(faceLeft);
+      invert ? this._actorSetDirection(actorRef, ".DIR_RIGHT") : this._actorSetDirection(actorRef, ".DIR_LEFT");
+      this._jump(endLabel);
+    }
+
+    this._label(yLabel);
+    if (direction !== "horizontal") {
+      this._rpn()
+        .ref(this._localRef(actorRef, 2))
+        .ref(this._localRef(otherActorRef, 2))
+        .stop();
+      this._if(".LT", ".ARG0", ".ARG1", faceUp, 2);
+      invert ? this._actorSetDirection(actorRef, ".DIR_UP") : this._actorSetDirection(actorRef, ".DIR_DOWN");
+      this._jump(endLabel);
+
+      this._label(faceUp);
+      invert ? this._actorSetDirection(actorRef, ".DIR_DOWN") : this._actorSetDirection(actorRef, ".DIR_UP");
+    } else {
+      this._jump(yOverride);
+    }
+    this._label(endLabel);
+    this._addNL();
+  };
+
+  actorChaseActor = (
+    actorId: string,
+    otherActorId: string,
+    x: number,
+    y: number,
+    useCollisions: false,
+    moveType: ScriptBuilderMoveType,
+    units: DistanceUnitType = "tiles",
+    invert: false
+  ) => {
+    const actorRef = this._declareLocal("actor", 4);
+    const otherActorRef = this._declareLocal("other_actor", 3, true);
+    const difference = this._declareLocal("difference", 2, true);
+    const movement = this._declareLocal("movement", 2, true);
+    const xSkip1 = this.getNextLabel();
+    const ySkip1 = this.getNextLabel();
+    const xSkip2 = this.getNextLabel();
+    const ySkip2 = this.getNextLabel();
+    this._addComment(`Actor Chase Actor`);
+    this.setActorId(actorRef, actorId);
+    this._actorGetPosition(actorRef);
+    this.setActorId(otherActorRef, otherActorId);
+    this._actorGetPosition(otherActorRef);
+    
+    this._setConst(this._localRef(movement, 0), 0);
+    this._setConst(this._localRef(movement, 1), 0);
+    
+    if (x != 0) {
+      this._rpn()
+        .ref(this._localRef(otherActorRef, 1))
+        .ref(this._localRef(actorRef, 1))
+        .operator(".SUB")
+        .refSet(this._localRef(difference, 0))
+        .stop();
+      this._ifConst(".EQ", this._localRef(difference, 0), 0, xSkip2, 0);
+
+      this._rpn()
+        .int16(x)
+        .int16(subpxShiftForUnits(units))
+        .operator(".SHR")
+        .ref(this._localRef(difference, 0))
+        .operator(".ABS")
+        .refSet(this._localRef(difference, 1))
+        .stop();
+      this._if(".GTE", this._localRef(difference, 1), ".ARG0", xSkip1, 1);
+
+      this._rpn()
+        .ref(difference)
+        .refSet(this._localRef(movement, 0))
+        .stop();
+      this._jump(xSkip2);
+      this._label(xSkip1);
+      this._rpn()
+        .ref(this._localRef(difference, 0))
+        .ref(this._localRef(difference, 1))
+        .operator(".DIV")
+        .int16(x)
+        .operator(".MUL")
+        .refSet(this._localRef(movement, 0))
+        .stop();
+      this._label(xSkip2);
+    }
+
+    if (y != 0) {
+      this._rpn()
+        .ref(this._localRef(otherActorRef, 2))
+        .ref(this._localRef(actorRef, 2))
+        .operator(".SUB")
+        .refSet(this._localRef(difference, 0))
+        .stop();
+      this._ifConst(".EQ", this._localRef(difference, 0), 0, ySkip2, 0);
+      this._rpn()
+        .int16(y)
+        .int16(subpxShiftForUnits(units))
+        .operator(".SHR")
+        .ref(this._localRef(difference, 0))
+        .operator(".ABS")
+        .refSet(this._localRef(difference, 1))
+        .stop();
+      this._if(".GTE", this._localRef(difference, 1), ".ARG0", ySkip1, 1);
+      this._rpn()
+        .ref(this._localRef(difference, 0))
+        .refSet(this._localRef(movement, 1))
+        .stop();
+      this._jump(ySkip2);
+      this._label(ySkip1);
+      this._rpn()
+        .ref(this._localRef(difference, 0))
+        .ref(this._localRef(difference, 1))
+        .operator(".DIV")
+        .int16(y)
+        .operator(".MUL")
+        .refSet(this._localRef(movement, 1))
+        .stop();
+      this._label(ySkip2);
+    }
+
+    const op = invert ? ".SUB" : ".ADD";
+    
+    this._rpn()
+      .ref(this._localRef(actorRef, 1))
+      .ref(this._localRef(movement, 0))
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(op)
+      .refSet(this._localRef(actorRef, 1))
+
+      .ref(this._localRef(actorRef, 2))
+      .ref(this._localRef(movement, 1))
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(op)
+      .refSet(this._localRef(actorRef, 2))
+      .stop();
+    
+    this._setConst(
+      this._localRef(actorRef, 3),
+      toASMMoveFlags(moveType, useCollisions)
+    );
+    this._actorMoveTo(actorRef);
+    this._addNL();
+  };
+
+  actorChaseActorVariables = (
+    actorId: string,
+    otherActorId: string,
+    xVar: string,
+    yVar: string,
+    useCollisions: false,
+    moveType: ScriptBuilderMoveType,
+    units: DistanceUnitType = "tiles",
+    invert: false
+  ) => {
+    const actorRef = this._declareLocal("actor", 4);
+    const otherActorRef = this._declareLocal("other_actor", 3, true);
+    const difference = this._declareLocal("difference", 2, true);
+    const movement = this._declareLocal("movement", 2, true);
+    const xSkip1 = this.getNextLabel();
+    const ySkip1 = this.getNextLabel();
+    const xSkip2 = this.getNextLabel();
+    const ySkip2 = this.getNextLabel();
+    this._addComment(`Actor Chase Actor`);
+    this.setActorId(actorRef, actorId);
+    this._actorGetPosition(actorRef);
+    this.setActorId(otherActorRef, otherActorId);
+    this._actorGetPosition(otherActorRef);
+    
+    this._setConst(this._localRef(movement, 0), 0);
+    this._setConst(this._localRef(movement, 1), 0);
+    
+    this._ifVariableConst(".EQ", xVar, 0, xSkip2, 0);
+    this._rpn()
+      .ref(this._localRef(otherActorRef, 1))
+      .ref(this._localRef(actorRef, 1))
+      .operator(".SUB")
+      .stop();
+    this._set(this._localRef(difference, 0), ".ARG0");
+    this._ifConst(".EQ", ".ARG0", 0, xSkip2, 1);
+    this._rpn()
+      .refVariable(xVar)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHR")
+      .ref(this._localRef(difference, 0))
+      .operator(".ABS")
+      .stop();
+    this._set(this._localRef(difference, 1), ".ARG0");
+    this._if(".GTE", ".ARG0", ".ARG1", xSkip1, 2);
+    this._rpn()
+      .ref(this._localRef(difference, 0))
+      .stop();
+    this._setConst(this._localRef(movement, 0), ".ARG0");
+    this._stackPop(1);
+    this._jump(xSkip2);
+    this._label(xSkip1);
+    this._rpn()
+      .ref(this._localRef(difference, 0))
+      .ref(this._localRef(difference, 1))
+      .operator(".DIV")
+      .refVariable(xVar)
+      .operator(".MUL")
+      .stop();
+    this._set(this._localRef(movement, 0), ".ARG0");
+    this._stackPop(1);
+    this._label(xSkip2);
+    
+    this._ifVariableConst(".EQ", yVar, 0, ySkip2, 0);
+    this._rpn()
+      .ref(this._localRef(otherActorRef, 2))
+      .ref(this._localRef(actorRef, 2))
+      .operator(".SUB")
+      .stop();
+    this._set(this._localRef(difference, 0), ".ARG0");
+    this._ifConst(".EQ", ".ARG0", 0, ySkip2, 1);
+    this._rpn()
+      .refVariable(yVar)
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHR")
+      .ref(this._localRef(difference, 0))
+      .operator(".ABS")
+      .stop();
+    this._set(this._localRef(difference, 1), ".ARG0");
+    this._if(".GTE", ".ARG0", ".ARG1", ySkip1, 2);
+    this._rpn()
+      .ref(this._localRef(difference, 0))
+      .stop();
+    this._setConst(this._localRef(movement, 1), ".ARG0");
+    this._stackPop(1);
+    this._jump(ySkip2);
+    this._label(ySkip1);
+    this._rpn()
+      .ref(this._localRef(difference, 0))
+      .ref(this._localRef(difference, 1))
+      .operator(".DIV")
+      .refVariable(yVar)
+      .operator(".MUL")
+      .stop();
+    this._set(this._localRef(movement, 1), ".ARG0");
+    this._stackPop(1);
+    this._label(ySkip2);
+    
+    const op = invert ? ".SUB" : ".ADD";
+    
+    this._rpn()
+      .ref(this._localRef(actorRef, 1))
+      .ref(this._localRef(movement, 0))
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(op)
+      .refSet(this._localRef(actorRef, 1))
+
+      .ref(this._localRef(actorRef, 2))
+      .ref(this._localRef(movement, 1))
+      .int16(subpxShiftForUnits(units))
+      .operator(".SHL")
+      .operator(op)
+      .refSet(this._localRef(actorRef, 2))
+      .stop();
+    
+    this._setConst(
+      this._localRef(actorRef, 3),
+      toASMMoveFlags(moveType, useCollisions)
+    );
+    this._actorMoveTo(actorRef);
+    this._addNL();
+  };
+
+  actorFollowActor = (
+    actorId: string,
+    otherActorId: string,
+    offsetX = 0,
+    offsetY = 0,
+    testVar: string,
+    useCollisions: boolean,
+    moveType: ScriptBuilderMoveType,
+    units: DistanceUnitType = "tiles"
+  ) => {
+    const actorPosRef = this._declareLocal("actor", 4);
+    const actorBoundsRef = this._declareLocal("actor_bounds", 5);
+    const otherActorDirRef = this._declareLocal("other_actor_dir", 1);
+    const currOtherActorDirRef = this._declareLocal("curr_other_actor_dir", 1);
+    const otherActorBoundsRef = this._declareLocal("other_actor_bounds", 5);
+
+    const labelRight = this.getNextLabel();
+    const labelUp = this.getNextLabel();
+    const labelDown = this.getNextLabel();
+    const labelEnd0 = this.getNextLabel();
+    const labelEnd1 = this.getNextLabel();
+    const labelEnd2 = this.getNextLabel();
+
+    this.setActorId(actorPosRef, otherActorId);
+    this._actorGetPosition(actorPosRef);
+    this._actorGetDirection(actorPosRef, otherActorDirRef);
+    this._actorGetDirection(actorPosRef, currOtherActorDirRef);
+    this._setVariable(testVar, otherActorDirRef);
+    this.setActorId(otherActorBoundsRef, otherActorId);
+    this._actorGetBoundsPos(otherActorBoundsRef);
+    this.setActorId(actorBoundsRef, actorId);
+    this._actorGetBounds(actorBoundsRef);
+    this.setActorId(actorPosRef, actorId);
+    this._addComment("Actor Follow Actor");
+
+    this._ifConst(".EQ", otherActorDirRef, ".DIR_DOWN", labelDown, 0);
+    this._ifConst(".EQ", otherActorDirRef, ".DIR_UP", labelUp, 0);
+    this._ifConst(".EQ", otherActorDirRef, ".DIR_RIGHT", labelRight, 0);
+
+    this._rpn()
+      .ref(this._localRef(otherActorBoundsRef, 2))
+      .int16(unitsValueToSubpx(offsetX, units))
+      .operator(".ADD")
+      .ref(this._localRef(actorBoundsRef, 1))
+      .operator(".SUB")
+      .int16(0)
+      .operator(".MAX")
+      .refSet(this._localRef(actorPosRef, 1))
+      .stop();
+    this._actorSetDirection(actorPosRef, ".DIR_LEFT");
+    this._jump(labelEnd0);
+    
+    this._label(labelRight);
+    this._rpn()
+      .ref(this._localRef(otherActorBoundsRef, 1))
+      .int16(unitsValueToSubpx(offsetX, units))
+      .operator(".SUB")
+      .ref(this._localRef(actorBoundsRef, 2))
+      .operator(".SUB")
+      .refSet(this._localRef(actorPosRef, 1))
+      .stop();
+    this._actorSetDirection(actorPosRef, ".DIR_RIGHT");
+    this._jump(labelEnd0);
+
+    this._label(labelUp);
+    this._rpn()
+      .ref(this._localRef(otherActorBoundsRef, 4))
+      .int16(unitsValueToSubpx(offsetY, units))
+      .operator(".ADD")
+      .ref(this._localRef(actorBoundsRef, 3))
+      .operator(".SUB")
+      .int16(0)
+      .operator(".MAX")
+      .refSet(this._localRef(actorPosRef, 2))
+      .stop();
+    this._actorSetDirection(actorPosRef, ".DIR_UP");
+    this._jump(labelEnd0);
+
+    this._label(labelDown);
+    this._rpn()
+      .ref(this._localRef(otherActorBoundsRef, 3))
+      .int16(unitsValueToSubpx(offsetY, units))
+      .operator(".SUB")
+      .ref(this._localRef(actorBoundsRef, 4))
+      .operator(".SUB")
+      .refSet(this._localRef(actorPosRef, 2))
+      .stop();
+    this._actorSetDirection(actorPosRef, ".DIR_DOWN");
+
+    this._label(labelEnd0);
+    this._setConst(this._localRef(actorPosRef, 3), toASMMoveFlags(moveType, useCollisions));
+    this._if(".NE", currOtherActorDirRef, otherActorDirRef, labelEnd1, 0);
+    this._actorSetPosition(actorPosRef);
+    this._jump(labelEnd2);
+    this._label(labelEnd1);
+    this._actorMoveTo(actorPosRef);
+    this.cameraShake(true, true, 5, 5)
+    this._label(labelEnd2);
+
+    this._addNL();
+  };
+
 }
 
 export default ScriptBuilder;

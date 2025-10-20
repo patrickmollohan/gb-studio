@@ -62,6 +62,14 @@ export type ScriptEventHelperDef =
       x: string;
       y: string;
       location: string;
+    }
+  | {
+      type: "boundary";
+      left: string;
+      right: string;
+      top: string;
+      bottom: string;
+      units?: string;
     };
 
 export type ScriptEventPresetValue = {
