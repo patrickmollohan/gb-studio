@@ -60,7 +60,7 @@ const fields = [
           variable: "LAST_VARIABLE",
           property: "$self$:xpos",
         },
-      }
+      },
     ],
   },
   {
@@ -111,7 +111,7 @@ const fields = [
     options: [
       ["position", l10n("FIELD_ACTOR_POSITION")],
       ["bounds_partial", l10n("FIELD_ACTOR_BOUNDS_PARTIAL")],
-      ["bounds_full", l10n("FIELD_ACTOR_BOUNDS_FULL")]
+      ["bounds_full", l10n("FIELD_ACTOR_BOUNDS_FULL")],
     ],
     defaultValue: "position",
   },
@@ -150,42 +150,131 @@ const fields = [
 ];
 
 const compile = (input, helpers) => {
-  const { ifActorPosInBoundary, ifActorPosInBoundaryVariables, ifActorBoundsInBoundaryPartial, ifActorBoundsInBoundaryPartialVariables, ifActorBoundsInBoundaryFull, ifActorBoundsInBoundaryFullVariables, temporaryEntityVariable, variableFromUnion } = helpers;
+  const {
+    ifActorPosInBoundary,
+    ifActorPosInBoundaryVariables,
+    ifActorBoundsInBoundaryPartial,
+    ifActorBoundsInBoundaryPartialVariables,
+    ifActorBoundsInBoundaryFull,
+    ifActorBoundsInBoundaryFullVariables,
+    temporaryEntityVariable,
+    variableFromUnion,
+  } = helpers;
   const truePath = input.true;
   const falsePath = input.__disableElse ? [] : input.false;
-  
-  if (input.left.type === "number" && input.right.type === "number" && input.top.type === "number" && input.bottom.type === "number") {
+
+  if (
+    input.left.type === "number" &&
+    input.right.type === "number" &&
+    input.top.type === "number" &&
+    input.bottom.type === "number"
+  ) {
     switch (input.checkType) {
       case "position":
-        ifActorPosInBoundary(input.actorId, input.left.value, input.right.value, input.top.value, input.bottom.value, truePath, falsePath, input.units);
+        ifActorPosInBoundary(
+          input.actorId,
+          input.left.value,
+          input.right.value,
+          input.top.value,
+          input.bottom.value,
+          truePath,
+          falsePath,
+          input.units,
+        );
         break;
       case "bounds_partial":
-        ifActorBoundsInBoundaryPartial(input.actorId, input.left.value, input.right.value, input.top.value, input.bottom.value, truePath, falsePath, input.units);
+        ifActorBoundsInBoundaryPartial(
+          input.actorId,
+          input.left.value,
+          input.right.value,
+          input.top.value,
+          input.bottom.value,
+          truePath,
+          falsePath,
+          input.units,
+        );
         break;
       case "bounds_full":
-        ifActorBoundsInBoundaryFull(input.actorId, input.left.value, input.right.value, input.top.value, input.bottom.value, truePath, falsePath, input.units);
+        ifActorBoundsInBoundaryFull(
+          input.actorId,
+          input.left.value,
+          input.right.value,
+          input.top.value,
+          input.bottom.value,
+          truePath,
+          falsePath,
+          input.units,
+        );
         break;
       default:
-        ifActorPosInBoundary(input.actorId, input.left.value, input.right.value, input.top.value, input.bottom.value, truePath, falsePath, input.units);
+        ifActorPosInBoundary(
+          input.actorId,
+          input.left.value,
+          input.right.value,
+          input.top.value,
+          input.bottom.value,
+          truePath,
+          falsePath,
+          input.units,
+        );
     }
   } else {
     const leftVar = variableFromUnion(input.left, temporaryEntityVariable(0));
     const rightVar = variableFromUnion(input.right, temporaryEntityVariable(1));
     const topVar = variableFromUnion(input.top, temporaryEntityVariable(2));
-    const bottomVar = variableFromUnion(input.bottom, temporaryEntityVariable(3));
+    const bottomVar = variableFromUnion(
+      input.bottom,
+      temporaryEntityVariable(3),
+    );
 
     switch (input.checkType) {
       case "position":
-        ifActorPosInBoundaryVariables(input.actorId, leftVar, rightVar, topVar, bottomVar, truePath, falsePath, input.units);
+        ifActorPosInBoundaryVariables(
+          input.actorId,
+          leftVar,
+          rightVar,
+          topVar,
+          bottomVar,
+          truePath,
+          falsePath,
+          input.units,
+        );
         break;
       case "bounds_partial":
-        ifActorBoundsInBoundaryPartialVariables(input.actorId, leftVar, rightVar, topVar, bottomVar, truePath, falsePath, input.units);
+        ifActorBoundsInBoundaryPartialVariables(
+          input.actorId,
+          leftVar,
+          rightVar,
+          topVar,
+          bottomVar,
+          truePath,
+          falsePath,
+          input.units,
+        );
         break;
       case "bounds_full":
-        ifActorBoundsInBoundaryFullVariables(input.actorId, leftVar, rightVar, topVar, bottomVar, truePath, falsePath, input.units);
+        ifActorBoundsInBoundaryFullVariables(
+          input.actorId,
+          leftVar,
+          rightVar,
+          topVar,
+          bottomVar,
+          truePath,
+          falsePath,
+          input.units,
+        );
         break;
       default:
-        ifActorPosInBoundaryVariables(input.actorId, leftVar, rightVar, topVar, bottomVar, truePath, falsePath, input.units);
+        ifActorPosInBoundaryVariables(
+          input.actorId,
+          leftVar,
+          rightVar,
+          topVar,
+          bottomVar,
+          truePath,
+          falsePath,
+          input.units,
+        );
     }
   }
 };

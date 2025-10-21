@@ -48,7 +48,12 @@ const fields = [
 
 const compile = (input, helpers) => {
   const { actorFaceActor } = helpers;
-  actorFaceActor(input.actorId, input.otherActorId, input.direction, input.invert);
+  actorFaceActor(
+    input.actorId,
+    input.otherActorId,
+    input.direction,
+    input.invert,
+  );
 };
 
 module.exports = {

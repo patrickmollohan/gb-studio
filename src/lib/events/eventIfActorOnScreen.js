@@ -5,7 +5,7 @@ const groups = ["EVENT_GROUP_CONTROL_FLOW", "EVENT_GROUP_ACTOR"];
 
 const autoLabel = (fetchArg, input) => {
   return l10n("EVENT_IF_ACTOR_ON_SCREEN_LABEL", {
-    actor: fetchArg("actorId")
+    actor: fetchArg("actorId"),
   });
 };
 
@@ -136,19 +136,50 @@ const fields = [
 ];
 
 const compile = (input, helpers) => {
-  const { ifActorOnScreen, ifActorOnScreenVariables, variableFromUnion, temporaryEntityVariable } = helpers;
+  const {
+    ifActorOnScreen,
+    ifActorOnScreenVariables,
+    variableFromUnion,
+    temporaryEntityVariable,
+  } = helpers;
   const truePath = input.true;
   const falsePath = input.__disableElse ? [] : input.false;
-  
-  if (input.left.type === "number" && input.right.type === "number" && input.top.type === "number" && input.bottom.type === "number") {
-    ifActorOnScreen(input.actorId, input.left.value, input.right.value, input.top.value, input.bottom.value, truePath, falsePath, input.units);
+
+  if (
+    input.left.type === "number" &&
+    input.right.type === "number" &&
+    input.top.type === "number" &&
+    input.bottom.type === "number"
+  ) {
+    ifActorOnScreen(
+      input.actorId,
+      input.left.value,
+      input.right.value,
+      input.top.value,
+      input.bottom.value,
+      truePath,
+      falsePath,
+      input.units,
+    );
   } else {
     const leftVar = variableFromUnion(input.left, temporaryEntityVariable(0));
     const rightVar = variableFromUnion(input.right, temporaryEntityVariable(1));
     const topVar = variableFromUnion(input.top, temporaryEntityVariable(2));
-    const bottomVar = variableFromUnion(input.bottom, temporaryEntityVariable(3));
+    const bottomVar = variableFromUnion(
+      input.bottom,
+      temporaryEntityVariable(3),
+    );
 
-    ifActorOnScreenVariables(input.actorId, leftVar, rightVar, topVar, bottomVar, truePath, falsePath, input.units);
+    ifActorOnScreenVariables(
+      input.actorId,
+      leftVar,
+      rightVar,
+      topVar,
+      bottomVar,
+      truePath,
+      falsePath,
+      input.units,
+    );
   }
 };
 

@@ -23,5 +23,5 @@ module.exports = {
   description,
   groups,
   fields,
-  compile
+  compile,
 };

@@ -550,21 +550,26 @@ export const SceneEventHelper: FC<SceneEventHelperProps> = ({ scene }) => {
       : "tiles";
     const left = ensureMaybeNumber(
       argValue(event.args?.[scriptEventDef.helper.left]),
-      0
+      0,
     );
     const right = ensureMaybeNumber(
       argValue(event.args?.[scriptEventDef.helper.right]),
-      0
+      0,
     );
     const top = ensureMaybeNumber(
       argValue(event.args?.[scriptEventDef.helper.top]),
-      0
+      0,
     );
     const bottom = ensureMaybeNumber(
       argValue(event.args?.[scriptEventDef.helper.bottom]),
-      0
+      0,
     );
-    if (left === undefined && right === undefined && top === undefined && bottom === undefined) {
+    if (
+      left === undefined &&
+      right === undefined &&
+      top === undefined &&
+      bottom === undefined
+    ) {
       return <div />;
     }
     return (
@@ -573,8 +578,14 @@ export const SceneEventHelper: FC<SceneEventHelperProps> = ({ scene }) => {
           style={{
             left: (left || 0) * (units === "pixels" ? 1 : TILE_SIZE),
             top: (top || 0) * (units === "pixels" ? 1 : TILE_SIZE),
-            width: ((right || 0) * (units === "pixels" ? 1 : TILE_SIZE)) - ((left || 0) * (units === "pixels" ? 1 : TILE_SIZE)) + (units === "pixels" ? 1 : TILE_SIZE),
-            height: ((bottom || 0) * (units === "pixels" ? 1 : TILE_SIZE)) - ((top || 0) * (units === "pixels" ? 1 : TILE_SIZE)) + (units === "pixels" ? 1 : TILE_SIZE),
+            width:
+              (right || 0) * (units === "pixels" ? 1 : TILE_SIZE) -
+              (left || 0) * (units === "pixels" ? 1 : TILE_SIZE) +
+              (units === "pixels" ? 1 : TILE_SIZE),
+            height:
+              (bottom || 0) * (units === "pixels" ? 1 : TILE_SIZE) -
+              (top || 0) * (units === "pixels" ? 1 : TILE_SIZE) +
+              (units === "pixels" ? 1 : TILE_SIZE),
           }}
         />
       </EventHelperWrapper>

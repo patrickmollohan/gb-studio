@@ -8366,7 +8366,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: number,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor_pos", 3);
     const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
@@ -8411,7 +8411,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".AND")
 
       .stop();
-    
+
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
     this._addNL();
     this._compilePath(truePath);
@@ -8430,7 +8430,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: string,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor_pos", 3);
     const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
@@ -8487,7 +8487,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".AND")
 
       .stop();
-    
+
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
     this._addNL();
     this._compilePath(truePath);
@@ -8506,7 +8506,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: number,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor_pos", 3);
     const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
@@ -8551,7 +8551,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".AND")
 
       .stop();
-    
+
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
     this._addNL();
     this._compilePath(truePath);
@@ -8570,7 +8570,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: string,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor_pos", 3);
     const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
@@ -8627,7 +8627,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".AND")
 
       .stop();
-    
+
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
     this._addNL();
     this._compilePath(truePath);
@@ -8646,7 +8646,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: number,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor_pos", 3);
     const falseLabel = this.getNextLabel();
@@ -8680,7 +8680,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".AND")
 
       .stop();
-    
+
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
     this._addNL();
     this._compilePath(truePath);
@@ -8699,7 +8699,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: string,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor", 3);
     const falseLabel = this.getNextLabel();
@@ -8741,7 +8741,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".AND")
 
       .stop();
-    
+
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
     this._addNL();
     this._compilePath(truePath);
@@ -8760,7 +8760,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: number,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor_pos", 3);
     const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
@@ -8785,7 +8785,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .int16(unitsValueToSubpx(left, units))
       .operator(".SUB")
       .operator(".GT")
-      
+
       // Right screen edge
       .ref(this._localRef(actorPosRef, 1))
       .ref(this._localRef(actorBoundsRef, 1))
@@ -8799,7 +8799,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".ADD")
       .operator(".LT")
       .operator(".AND")
-      
+
       // Top screen edge
       .ref(this._localRef(actorPosRef, 2))
       .ref(this._localRef(actorBoundsRef, 4))
@@ -8811,7 +8811,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".SUB")
       .operator(".GT")
       .operator(".AND")
-      
+
       // Bottom screen edge
       .ref(this._localRef(actorPosRef, 2))
       .ref(this._localRef(actorBoundsRef, 3))
@@ -8825,7 +8825,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".ADD")
       .operator(".LT")
       .operator(".AND")
-      
+
       .stop();
 
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
@@ -8846,7 +8846,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     bottom: string,
     truePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
     falsePath: ScriptEvent[] | ScriptBuilderPathFunction = [],
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor_pos", 3);
     const actorBoundsRef = this._declareLocal("actor_bounds", 5, true);
@@ -8873,7 +8873,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".SHL")
       .operator(".SUB")
       .operator(".GT")
-      
+
       // Right screen edge
       .ref(this._localRef(actorPosRef, 1))
       .ref(this._localRef(actorBoundsRef, 1))
@@ -8889,7 +8889,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".ADD")
       .operator(".LT")
       .operator(".AND")
-      
+
       // Top screen edge
       .ref(this._localRef(actorPosRef, 2))
       .ref(this._localRef(actorBoundsRef, 4))
@@ -8903,7 +8903,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".SUB")
       .operator(".GT")
       .operator(".AND")
-      
+
       // Bottom screen edge
       .ref(this._localRef(actorPosRef, 2))
       .ref(this._localRef(actorBoundsRef, 3))
@@ -8919,7 +8919,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(".ADD")
       .operator(".LT")
       .operator(".AND")
-      
+
       .stop();
 
     this._ifConst(".EQ", ".ARG0", 0, falseLabel, 1);
@@ -8932,7 +8932,12 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     this._addNL();
   };
 
-  actorFaceActor = (actorId: string, actorId2: string, direction: string, invert: boolean) => {
+  actorFaceActor = (
+    actorId: string,
+    actorId2: string,
+    direction: string,
+    invert: boolean,
+  ) => {
     const actorRef = this._declareLocal("actor", 4);
     const otherActorRef = this._declareLocal("other_actor", 3, true);
     const yLabel = this.getNextLabel();
@@ -8966,11 +8971,15 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
         .ref(this._localRef(otherActorRef, 1))
         .stop();
       this._if(".LT", ".ARG0", ".ARG1", faceLeft, 2);
-      invert ? this._actorSetDirection(actorRef, ".DIR_LEFT") : this._actorSetDirection(actorRef, ".DIR_RIGHT");
+      invert
+        ? this._actorSetDirection(actorRef, ".DIR_LEFT")
+        : this._actorSetDirection(actorRef, ".DIR_RIGHT");
       this._jump(endLabel);
 
       this._label(faceLeft);
-      invert ? this._actorSetDirection(actorRef, ".DIR_RIGHT") : this._actorSetDirection(actorRef, ".DIR_LEFT");
+      invert
+        ? this._actorSetDirection(actorRef, ".DIR_RIGHT")
+        : this._actorSetDirection(actorRef, ".DIR_LEFT");
       this._jump(endLabel);
     }
 
@@ -8981,11 +8990,15 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
         .ref(this._localRef(otherActorRef, 2))
         .stop();
       this._if(".LT", ".ARG0", ".ARG1", faceUp, 2);
-      invert ? this._actorSetDirection(actorRef, ".DIR_UP") : this._actorSetDirection(actorRef, ".DIR_DOWN");
+      invert
+        ? this._actorSetDirection(actorRef, ".DIR_UP")
+        : this._actorSetDirection(actorRef, ".DIR_DOWN");
       this._jump(endLabel);
 
       this._label(faceUp);
-      invert ? this._actorSetDirection(actorRef, ".DIR_DOWN") : this._actorSetDirection(actorRef, ".DIR_UP");
+      invert
+        ? this._actorSetDirection(actorRef, ".DIR_DOWN")
+        : this._actorSetDirection(actorRef, ".DIR_UP");
     } else {
       this._jump(yOverride);
     }
@@ -9001,7 +9014,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     useCollisions: false,
     moveType: ScriptBuilderMoveType,
     units: DistanceUnitType = "tiles",
-    invert: false
+    invert: false,
   ) => {
     const actorRef = this._declareLocal("actor", 4);
     const otherActorRef = this._declareLocal("other_actor", 3, true);
@@ -9016,10 +9029,10 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     this._actorGetPosition(actorRef);
     this.setActorId(otherActorRef, otherActorId);
     this._actorGetPosition(otherActorRef);
-    
+
     this._setConst(this._localRef(movement, 0), 0);
     this._setConst(this._localRef(movement, 1), 0);
-    
+
     if (x != 0) {
       this._rpn()
         .ref(this._localRef(otherActorRef, 1))
@@ -9039,10 +9052,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
         .stop();
       this._if(".GTE", this._localRef(difference, 1), ".ARG0", xSkip1, 1);
 
-      this._rpn()
-        .ref(difference)
-        .refSet(this._localRef(movement, 0))
-        .stop();
+      this._rpn().ref(difference).refSet(this._localRef(movement, 0)).stop();
       this._jump(xSkip2);
       this._label(xSkip1);
       this._rpn()
@@ -9091,7 +9101,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     }
 
     const op = invert ? ".SUB" : ".ADD";
-    
+
     this._rpn()
       .ref(this._localRef(actorRef, 1))
       .ref(this._localRef(movement, 0))
@@ -9107,10 +9117,10 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(op)
       .refSet(this._localRef(actorRef, 2))
       .stop();
-    
+
     this._setConst(
       this._localRef(actorRef, 3),
-      toASMMoveFlags(moveType, useCollisions)
+      toASMMoveFlags(moveType, useCollisions),
     );
     this._actorMoveTo(actorRef);
     this._addNL();
@@ -9124,7 +9134,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     useCollisions: false,
     moveType: ScriptBuilderMoveType,
     units: DistanceUnitType = "tiles",
-    invert: false
+    invert: false,
   ) => {
     const actorRef = this._declareLocal("actor", 4);
     const otherActorRef = this._declareLocal("other_actor", 3, true);
@@ -9139,10 +9149,10 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     this._actorGetPosition(actorRef);
     this.setActorId(otherActorRef, otherActorId);
     this._actorGetPosition(otherActorRef);
-    
+
     this._setConst(this._localRef(movement, 0), 0);
     this._setConst(this._localRef(movement, 1), 0);
-    
+
     this._ifVariableConst(".EQ", xVar, 0, xSkip2, 0);
     this._rpn()
       .ref(this._localRef(otherActorRef, 1))
@@ -9160,9 +9170,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .stop();
     this._set(this._localRef(difference, 1), ".ARG0");
     this._if(".GTE", ".ARG0", ".ARG1", xSkip1, 2);
-    this._rpn()
-      .ref(this._localRef(difference, 0))
-      .stop();
+    this._rpn().ref(this._localRef(difference, 0)).stop();
     this._setConst(this._localRef(movement, 0), ".ARG0");
     this._stackPop(1);
     this._jump(xSkip2);
@@ -9177,7 +9185,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     this._set(this._localRef(movement, 0), ".ARG0");
     this._stackPop(1);
     this._label(xSkip2);
-    
+
     this._ifVariableConst(".EQ", yVar, 0, ySkip2, 0);
     this._rpn()
       .ref(this._localRef(otherActorRef, 2))
@@ -9195,9 +9203,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .stop();
     this._set(this._localRef(difference, 1), ".ARG0");
     this._if(".GTE", ".ARG0", ".ARG1", ySkip1, 2);
-    this._rpn()
-      .ref(this._localRef(difference, 0))
-      .stop();
+    this._rpn().ref(this._localRef(difference, 0)).stop();
     this._setConst(this._localRef(movement, 1), ".ARG0");
     this._stackPop(1);
     this._jump(ySkip2);
@@ -9212,9 +9218,9 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     this._set(this._localRef(movement, 1), ".ARG0");
     this._stackPop(1);
     this._label(ySkip2);
-    
+
     const op = invert ? ".SUB" : ".ADD";
-    
+
     this._rpn()
       .ref(this._localRef(actorRef, 1))
       .ref(this._localRef(movement, 0))
@@ -9230,10 +9236,10 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .operator(op)
       .refSet(this._localRef(actorRef, 2))
       .stop();
-    
+
     this._setConst(
       this._localRef(actorRef, 3),
-      toASMMoveFlags(moveType, useCollisions)
+      toASMMoveFlags(moveType, useCollisions),
     );
     this._actorMoveTo(actorRef);
     this._addNL();
@@ -9247,7 +9253,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     testVar: string,
     useCollisions: boolean,
     moveType: ScriptBuilderMoveType,
-    units: DistanceUnitType = "tiles"
+    units: DistanceUnitType = "tiles",
   ) => {
     const actorPosRef = this._declareLocal("actor", 4);
     const actorBoundsRef = this._declareLocal("actor_bounds", 5);
@@ -9288,7 +9294,7 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
       .stop();
     this._actorSetDirection(actorPosRef, ".DIR_LEFT");
     this._jump(labelEnd);
-    
+
     this._label(labelRight);
     this._rpn()
       .ref(this._localRef(otherActorBoundsRef, 1))
@@ -9327,12 +9333,14 @@ ${lock ? this._padCmd("VM_LOCK", "", 8, 24) + "\n\n" : ""}${
     this._actorSetDirection(actorPosRef, ".DIR_DOWN");
 
     this._label(labelEnd);
-    this._setConst(this._localRef(actorPosRef, 3), toASMMoveFlags(moveType, useCollisions));
+    this._setConst(
+      this._localRef(actorPosRef, 3),
+      toASMMoveFlags(moveType, useCollisions),
+    );
     this._actorSetPosition(actorPosRef);
 
     this._addNL();
   };
-
 }
 
 export default ScriptBuilder;

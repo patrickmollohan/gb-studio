@@ -100,13 +100,36 @@ const fields = [
 ];
 
 const compile = (input, helpers) => {
-  const { actorChaseActor, actorChaseActorVariables, variableFromUnion, temporaryEntityVariable } = helpers;
+  const {
+    actorChaseActor,
+    actorChaseActorVariables,
+    variableFromUnion,
+    temporaryEntityVariable,
+  } = helpers;
   if (input.x.type === "number" && input.y.type === "number") {
-    actorChaseActor(input.actorId, input.otherActorId, input.x.value, input.y.value, input.useCollisions, input.moveType, input.units, input.invert);
+    actorChaseActor(
+      input.actorId,
+      input.otherActorId,
+      input.x.value,
+      input.y.value,
+      input.useCollisions,
+      input.moveType,
+      input.units,
+      input.invert,
+    );
   } else {
-  	const xVar = variableFromUnion(input.x, temporaryEntityVariable(0));
+    const xVar = variableFromUnion(input.x, temporaryEntityVariable(0));
     const yVar = variableFromUnion(input.y, temporaryEntityVariable(1));
-    actorChaseActorVariables(input.actorId, input.otherActorId, xVar, yVar, input.useCollisions, input.moveType, input.units, input.invert);
+    actorChaseActorVariables(
+      input.actorId,
+      input.otherActorId,
+      xVar,
+      yVar,
+      input.useCollisions,
+      input.moveType,
+      input.units,
+      input.invert,
+    );
   }
 };
 

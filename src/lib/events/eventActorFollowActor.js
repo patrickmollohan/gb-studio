@@ -16,7 +16,7 @@ const autoLabel = (fetchArg, input) => {
 
 const fields = [
   {
-  	type: "group",
+    type: "group",
     fields: [
       {
         key: "actorId",
@@ -111,11 +111,28 @@ const compile = (input, helpers) => {
     temporaryEntityVariable,
   } = helpers;
   if (input.offsetX.type === "number" && input.offsetY.type === "number") {
-    actorFollowActor(input.actorId, input.otherActor, input.offsetX.value, input.offsetY.value, input.variable, input.useCollisions, input.moveType, input.units);
+    actorFollowActor(
+      input.actorId,
+      input.otherActor,
+      input.offsetX.value,
+      input.offsetY.value,
+      input.variable,
+      input.useCollisions,
+      input.moveType,
+      input.units,
+    );
   } else {
     const xVar = variableFromUnion(input.offsetX, temporaryEntityVariable(0));
     const yVar = variableFromUnion(input.offsetY, temporaryEntityVariable(1));
-    actorFollowActorVariables(input.actorId, input.otherActor, xVar, yVar, input.useCollisions, input.moveType, input.units);
+    actorFollowActorVariables(
+      input.actorId,
+      input.otherActor,
+      xVar,
+      yVar,
+      input.useCollisions,
+      input.moveType,
+      input.units,
+    );
   }
 };
 
